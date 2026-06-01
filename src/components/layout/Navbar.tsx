@@ -219,21 +219,37 @@ export default function Navbar() {
             ) : (
               /* NOT Authenticated - Show Login & Register Buttons */
               <div className="hidden md:flex items-center gap-2">
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-600"
-                >
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className="bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-500/20"
-                >
-                  <Link to="/register">Get Started</Link>
-                </Button>
+             <Button
+  asChild
+  variant="ghost"
+  size="sm"
+  className="
+    text-slate-600
+    hover:text-blue-600
+    hover:bg-blue-50
+    hover:-translate-y-0.5
+    transition-all duration-200
+    rounded-lg
+  "
+>
+  <Link to="/login">Login</Link>
+</Button>
+              <Button
+  asChild
+  size="sm"
+  className="
+    bg-gradient-to-r from-blue-600 to-indigo-600
+    hover:from-blue-700 hover:to-indigo-700
+    text-white font-medium
+    shadow-md shadow-blue-500/20
+    hover:shadow-lg hover:shadow-blue-500/30
+    hover:-translate-y-0.5
+    transition-all duration-200
+    rounded-lg
+  "
+>
+  <Link to="/register">Get Started</Link>
+</Button>
               </div>
             )}
 
