@@ -10,7 +10,6 @@ import {
   FiEye,
   FiEyeOff,
   FiLoader,
-  FiCheckCircle,
   FiAlertCircle,
 } from 'react-icons/fi';
 
@@ -59,6 +58,7 @@ export default function Register() {
       setIsLoading(true);
       try {
         await register(values);
+
         if (values.role === 'Customer') {
           toast.success(`Welcome ${values.firstName}!`);
           setTimeout(() => {
@@ -93,26 +93,6 @@ export default function Register() {
         : 'border-slate-200 bg-slate-50 focus-visible:ring-blue-100'
     }`;
 
-  // Password strength indicator
-  const getPasswordStrength = () => {
-    const password = formik.values.password;
-    if (!password) return { strength: 0, label: '', color: '' };
-
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-    if (strength <= 2) return { strength, label: 'Weak', color: 'bg-red-500' };
-    if (strength <= 3) return { strength, label: 'Medium', color: 'bg-amber-500' };
-    if (strength <= 4) return { strength, label: 'Strong', color: 'bg-emerald-500' };
-    return { strength, label: 'Very Strong', color: 'bg-emerald-600' };
-  };
-
-  const passwordStrength = getPasswordStrength();
-
   return (
     <div className="min-h-[calc(100vh-84px)] bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-12">
       <motion.div
@@ -136,253 +116,176 @@ export default function Register() {
 
           <CardContent className="px-8">
             <form onSubmit={formik.handleSubmit} className="space-y-4">
-              {/* Name Row */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FieldWrapper
+              {/* First Name */}
+              <div className="space-y-1.5 relative">
+                <Label className="text-sm font-semibold text-slate-700">
+                  First Name
+                </Label>
+                <FiUser className="absolute left-3.5 top-10 text-slate-400 h-4 w-4" />
+                <Input
                   id="firstName"
-                  label="First Name"
-                  error={
-                    formik.touched.firstName && formik.errors.firstName
-                      ? formik.errors.firstName
-                      : undefined
-                  }
-                >
-                  <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 pointer-events-none" />
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    autoComplete="given-name"
-                    value={formik.values.firstName}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    placeholder="John"
-                    className={fieldClass('firstName')}
-                  />
-                </FieldWrapper>
+                  name="firstName"
+                  value={formik.values.firstName}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="John"
+                  className={fieldClass('firstName')}
+                />
+                {formik.touched.firstName && formik.errors.firstName && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <FiAlertCircle className="h-3 w-3" />
+                    {formik.errors.firstName}
+                  </p>
+                )}
+              </div>
 
-                <FieldWrapper
+              {/* Last Name */}
+              <div className="space-y-1.5 relative">
+                <Label className="text-sm font-semibold text-slate-700">
+                  Last Name
+                </Label>
+                <FiUser className="absolute left-3.5 top-10 text-slate-400 h-4 w-4" />
+                <Input
                   id="lastName"
-                  label="Last Name"
-                  error={
-                    formik.touched.lastName && formik.errors.lastName
-                      ? formik.errors.lastName
-                      : undefined
-                  }
-                >
-                  <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 pointer-events-none" />
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    autoComplete="family-name"
-                    value={formik.values.lastName}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    placeholder="Doe"
-                    className={fieldClass('lastName')}
-                  />
-                </FieldWrapper>
+                  name="lastName"
+                  value={formik.values.lastName}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Doe"
+                  className={fieldClass('lastName')}
+                />
+                {formik.touched.lastName && formik.errors.lastName && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <FiAlertCircle className="h-3 w-3" />
+                    {formik.errors.lastName}
+                  </p>
+                )}
               </div>
 
               {/* Email */}
-              <FieldWrapper
-                id="email"
-                label="Email Address"
-                error={
-                  formik.touched.email && formik.errors.email
-                    ? formik.errors.email
-                    : undefined
-                }
-              >
-                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 pointer-events-none" />
+              <div className="space-y-1.5 relative">
+                <Label className="text-sm font-semibold text-slate-700">
+                  Email
+                </Label>
+                <FiMail className="absolute left-3.5 top-10 text-slate-400 h-4 w-4" />
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="you@example.com"
                   className={fieldClass('email')}
                 />
-              </FieldWrapper>
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <FiAlertCircle className="h-3 w-3" />
+                    {formik.errors.email}
+                  </p>
+                )}
+              </div>
 
               {/* Password */}
-              <FieldWrapper
-                id="password"
-                label="Password"
-                error={
-                  formik.touched.password && formik.errors.password
-                    ? formik.errors.password
-                    : undefined
-                }
-              >
-                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 pointer-events-none" />
+              <div className="space-y-1.5 relative">
+                <Label className="text-sm font-semibold text-slate-700">
+                  Password
+                </Label>
+                <FiLock className="absolute left-3.5 top-10 text-slate-400 h-4 w-4" />
+
                 <Input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="••••••••"
                   className={`${fieldClass('password')} pr-10`}
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
+                  className="absolute right-3 top-9 text-slate-400"
                 >
-                  {showPassword ? (
-                    <FiEyeOff className="h-4 w-4" />
-                  ) : (
-                    <FiEye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
                 </button>
-              </FieldWrapper>
 
-              {/* Password Strength Indicator */}
-              {formik.values.password && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="space-y-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{
-                          width: `${(passwordStrength.strength / 5) * 100}%`,
-                        }}
-                        className={`h-full ${passwordStrength.color} transition-all duration-300`}
-                      />
-                    </div>
-                    <span className="text-xs font-medium text-slate-600">
-                      {passwordStrength.label}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-500 space-y-1">
-                    <p className="flex items-center gap-1.5">
-                      {formik.values.password.length >= 8 ? (
-                        <FiCheckCircle className="text-emerald-500" />
-                      ) : (
-                        <FiAlertCircle className="text-slate-300" />
-                      )}
-                      At least 8 characters
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      {/[A-Z]/.test(formik.values.password) ? (
-                        <FiCheckCircle className="text-emerald-500" />
-                      ) : (
-                        <FiAlertCircle className="text-slate-300" />
-                      )}
-                      One uppercase letter
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      {/[a-z]/.test(formik.values.password) ? (
-                        <FiCheckCircle className="text-emerald-500" />
-                      ) : (
-                        <FiAlertCircle className="text-slate-300" />
-                      )}
-                      One lowercase letter
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      {/[0-9]/.test(formik.values.password) ? (
-                        <FiCheckCircle className="text-emerald-500" />
-                      ) : (
-                        <FiAlertCircle className="text-slate-300" />
-                      )}
-                      One number
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      {/[^A-Za-z0-9]/.test(formik.values.password) ? (
-                        <FiCheckCircle className="text-emerald-500" />
-                      ) : (
-                        <FiAlertCircle className="text-slate-300" />
-                      )}
-                      One special character
-                    </p>
-                  </div>
-                </motion.div>
-              )}
+                {formik.touched.password && formik.errors.password && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <FiAlertCircle className="h-3 w-3" />
+                    {formik.errors.password}
+                  </p>
+                )}
+              </div>
 
               {/* Confirm Password */}
-              <FieldWrapper
-                id="confirmPassword"
-                label="Confirm Password"
-                error={
-                  formik.touched.confirmPassword && formik.errors.confirmPassword
-                    ? formik.errors.confirmPassword
-                    : undefined
-                }
-              >
-                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 pointer-events-none" />
+              <div className="space-y-1.5 relative">
+                <Label className="text-sm font-semibold text-slate-700">
+                  Confirm Password
+                </Label>
+                <FiLock className="absolute left-3.5 top-10 text-slate-400 h-4 w-4" />
+
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="••••••••"
                   className={`${fieldClass('confirmPassword')} pr-10`}
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
+                  className="absolute right-3 top-9 text-slate-400"
                 >
-                  {showConfirmPassword ? (
-                    <FiEyeOff className="h-4 w-4" />
-                  ) : (
-                    <FiEye className="h-4 w-4" />
-                  )}
+                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
                 </button>
-              </FieldWrapper>
 
-              {/* Role Select */}
+                {formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword && (
+                    <p className="text-xs text-red-600 flex items-center gap-1">
+                      <FiAlertCircle className="h-3 w-3" />
+                      {formik.errors.confirmPassword}
+                    </p>
+                  )}
+              </div>
+
+              {/* Role */}
               <div className="space-y-1.5">
                 <Label className="text-sm font-semibold text-slate-700">
-                  Select User Role
+                  Role
                 </Label>
+
                 <Select
                   value={formik.values.role}
                   onValueChange={(val) => formik.setFieldValue('role', val)}
                 >
-                  <SelectTrigger className="rounded-xl border-slate-200 bg-slate-50 focus:ring-blue-100">
-                    <SelectValue placeholder="Select a role" />
+                  <SelectTrigger className="rounded-xl border-slate-200 bg-slate-50">
+                    <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="Customer">Customer (User)</SelectItem>
+                  <SelectContent>
+                    <SelectItem value="Customer">Customer</SelectItem>
                     <SelectItem value="Admin">Admin</SelectItem>
                     <SelectItem value="Super Admin">Super Admin</SelectItem>
                   </SelectContent>
                 </Select>
-                {formik.touched.role && formik.errors.role && (
-                  <p className="text-xs text-red-600 font-medium flex items-center gap-1">
-                    <FiAlertCircle className="h-3 w-3" />
-                    {formik.errors.role}
-                  </p>
-                )}
               </div>
 
-              {/* Submit Button */}
+              {/* Submit */}
               <Button
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`w-full rounded-xl py-5 text-sm font-bold shadow-lg mt-2 transition-all ${
-                  isLoading || !isFormValid
-                    ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
-                    : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-blue-500/25'
-                }`}
+                className="w-full rounded-xl py-5 font-bold bg-blue-600 text-white"
               >
                 {isLoading ? (
                   <>
-                    <FiLoader className="h-4 w-4 animate-spin mr-2" />
-                    Creating account...
+                    <FiLoader className="animate-spin mr-2" />
+                    Creating...
                   </>
                 ) : (
                   'Create Account'
@@ -391,14 +294,11 @@ export default function Register() {
             </form>
           </CardContent>
 
-          <CardFooter className="flex justify-center pb-8 pt-2">
+          <CardFooter className="justify-center pb-8">
             <p className="text-sm text-slate-500">
               Already have an account?{' '}
-              <Link
-                to="/login"
-                className="font-bold text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                Login here
+              <Link to="/login" className="text-blue-600 font-bold">
+                Login
               </Link>
             </p>
           </CardFooter>
@@ -408,33 +308,19 @@ export default function Register() {
   );
 }
 
-// Reusable Field Wrapper Component
-interface FieldWrapperProps {
-  id: string;
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}
 
-function FieldWrapper({ id, label, error, children }: FieldWrapperProps) {
-  return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-sm font-semibold text-slate-700">
-        {label}
-      </Label>
-      <div className="relative">{children}</div>
-      {error && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-red-600 font-medium flex items-center gap-1"
-        >
-          <FiAlertCircle className="h-3 w-3" />
-          {error}
-        </motion.p>
-      )}
-    </div>
-  );
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

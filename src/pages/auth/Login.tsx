@@ -8,7 +8,6 @@ import {
   FiLock,
   FiEye,
   FiEyeOff,
-  FiCheckCircle,
   FiAlertCircle,
   FiLoader,
   FiLogIn,
@@ -220,42 +219,7 @@ export default function Login() {
                   'Sign In'
                 )}
               </Button>
-
-              {/* Status Indicator */}
-              <div className="flex items-center justify-center gap-2 text-xs">
-                {isFormValid ? (
-                  <>
-                    <FiCheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-emerald-600 font-medium">
-                      Valid credentials entered
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <FiAlertCircle className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="text-slate-400">
-                      Please enter your login details
-                    </span>
-                  </>
-                )}
-              </div>
             </form>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-              <p className="text-xs font-semibold text-blue-900 mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-xs text-blue-700">
-                <p>
-                  <strong>Super Admin:</strong> superadmin@demo.com / SuperAdmin123!
-                </p>
-                <p>
-                  <strong>Admin:</strong> admin@demo.com / AdminDemo123!
-                </p>
-                <p>
-                  <strong>Customer:</strong> customer@demo.com / Customer123!
-                </p>
-              </div>
-            </div>
           </CardContent>
 
           <CardFooter className="flex justify-center pb-8 pt-2">
@@ -274,6 +238,19 @@ export default function Login() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
