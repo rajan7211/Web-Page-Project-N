@@ -25,7 +25,7 @@ export default function SuperAdminDashboard() {
   const searchedUsers = useSearch(users, searchQuery, ['name', 'email', 'role']);
 
   // Pagination
-  const pagination = usePagination(searchedUsers.length, 10);
+  const pagination = usePagination(searchedUsers.length, 5);
   const paginatedUsers = searchedUsers.slice(pagination.startIndex, pagination.endIndex);
 
   // Simple stats

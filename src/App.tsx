@@ -71,15 +71,8 @@ function App() {
           <Navbar />
           <main className="flex-1">
             <Routes>
-              {/* Public Routes (redirect if authenticated) */}
-              <Route
-                path="/"
-                element={
-                  <PublicRoute>
-                    <Home />
-                  </PublicRoute>
-                }
-              />
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
               <Route
                 path="/login"
                 element={

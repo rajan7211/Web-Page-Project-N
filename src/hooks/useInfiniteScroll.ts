@@ -28,7 +28,7 @@ export function useInfiniteScroll<T>(
           }
         },
         {
-          threshold: 1.0,
+          threshold: 0.1,
         }
       );
 
@@ -43,6 +43,12 @@ export function useInfiniteScroll<T>(
     hasMore: visibleCount < items.length,
   };
 }
+
+
+
+
+
+
 
 
 

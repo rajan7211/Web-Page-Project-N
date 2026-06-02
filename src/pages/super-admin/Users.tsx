@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { FiSearch, FiFilter, FiUserPlus } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiUserPlus, FiLogIn } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearch } from '@/hooks/useSearch';
@@ -13,7 +14,8 @@ import { DataTable } from '@/components/shared/DataTable';
 import { Pagination } from '@/components/shared/Pagination';
 
 export default function SuperAdminUsers() {
-  const { users } = useAuth();
+  const { users, impersonateUser, currentUser } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -26,13 +28,19 @@ export default function SuperAdminUsers() {
     return result;
   }, [searchedUsers, roleFilter, statusFilter]);
 
-  const pagination = usePagination(filteredUsers.length, 15);
+  const pagination = usePagination(filteredUsers.length, 4);
   const paginatedUsers = filteredUsers.slice(pagination.startIndex, pagination.endIndex);
 
   const getRoleBadge = (role: string) => {
     if (role === 'Super Admin') return 'bg-slate-900 text-white';
     if (role === 'Admin') return 'bg-blue-100 text-blue-700';
     return 'bg-emerald-100 text-emerald-700';
+  };
+
+  const handleImpersonate = (userId: string, userRole: string) => {
+    impersonateUser(userId);
+    const dashboardRoute = userRole === 'Admin' ? '/admin' : '/customer';
+    navigate(dashboardRoute);
   };
 
   const columns = [
@@ -68,9 +76,17 @@ export default function SuperAdminUsers() {
     {
       key: 'id' as const,
       label: 'Actions',
-      render: () => (
+      render: (value: string, row: any) => (
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm">Edit</Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleImpersonate(value, row.role)}
+            className="gap-1 text-blue-600 hover:text-blue-700"
+          >
+            <FiLogIn className="h-4 w-4" />
+            Impersonate
+          </Button>
           <Button variant="ghost" size="sm" className="text-red-600">Delete</Button>
         </div>
       ),
@@ -128,6 +144,16 @@ export default function SuperAdminUsers() {
     </DashboardLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

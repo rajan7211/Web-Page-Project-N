@@ -19,6 +19,7 @@ import {
   FiBell,
   FiMoon,
   FiSun,
+  FiAlertTriangle,
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -72,7 +73,7 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, originalUser, isImpersonating, stopImpersonating } = useAuth();
 
   const menuItems = useMemo(
     () => (currentUser?.role ? roleMenu[currentUser.role] || [] : []),
@@ -338,6 +339,30 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
 
           {/* Page Content */}
           <main className="flex-1 p-6">
+            {/* Impersonation Alert Banner */}
+            {isImpersonating && originalUser && (
+              <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <FiAlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-900">
+                      Impersonating: {currentUser?.name}
+                    </p>
+                    <p className="text-xs text-amber-700 mt-0.5">
+                      You are viewing this account as Super Admin {originalUser?.name}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={stopImpersonating}
+                  className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                >
+                  Stop Impersonating
+                </Button>
+              </div>
+            )}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               {children}
             </div>

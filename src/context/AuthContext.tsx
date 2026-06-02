@@ -7,6 +7,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   users: User[];
   orders: Order[];
+  originalUser: User | null;
+  isImpersonating: boolean;
   login: (data: LoginData) => Promise<User>;
   register: (data: RegisterData) => Promise<User>;
   logout: () => void;
@@ -16,6 +18,8 @@ interface AuthContextType {
     userId : string,
     status : 'active' | 'inactive' | 'blocked'
   ) => void;
+  impersonateUser: (userId: string) => void;
+  stopImpersonating: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -46,6 +50,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : null;
   });
 
+  const [originalUser, setOriginalUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('originalUser');
+    return saved ? JSON.parse(saved) : null;
+  });
+
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
@@ -65,6 +74,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('isAuthenticated', 'false');
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    if (originalUser) {
+      localStorage.setItem('originalUser', JSON.stringify(originalUser));
+    } else {
+      localStorage.removeItem('originalUser');
+    }
+  }, [originalUser]);
 
   const login = async (data: LoginData): Promise<User> => {
     return new Promise((resolve, reject) => {
@@ -135,6 +152,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return orders.filter((order) => order.customerId === customerId);
   };
 
+  const impersonateUser = (userId: string) => {
+    if (currentUser?.role !== 'Super Admin') return;
+
+    const userToImpersonate = users.find((u) => u.id === userId);
+    if (!userToImpersonate) return;
+
+    const { password, ...userWithoutPassword } = userToImpersonate;
+    setOriginalUser(currentUser);
+    setCurrentUser(userWithoutPassword as User);
+  };
+
+  const stopImpersonating = () => {
+    if (originalUser) {
+      setCurrentUser(originalUser);
+      setOriginalUser(null);
+    }
+  };
+
   return (
  <AuthContext.Provider
   value={{
@@ -142,12 +177,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated,
     users,
     orders,
+    originalUser,
+    isImpersonating: !!originalUser,
     login,
     register,
     logout,
     getDashboardRoute,
     getOrdersForCustomer,
     updateUserStatus,
+    impersonateUser,
+    stopImpersonating,
   }}
 >
       {children}

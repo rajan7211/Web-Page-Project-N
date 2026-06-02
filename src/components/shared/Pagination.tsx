@@ -21,26 +21,48 @@ export function Pagination({
       <p className="text-sm text-slate-600">
         Page {currentPage} of {totalPages}
       </p>
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={!hasPrev}
-        >
-          <FiChevronLeft className="h-4 w-4 mr-1" />
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={!hasNext}
-        >
-          Next
-          <FiChevronRight className="h-4 w-4 ml-1" />
-        </Button>
-      </div>
+      
+<div className="flex gap-2">
+  <Button
+    variant="outline"
+    size="sm"
+    onClick={() => onPageChange(currentPage - 1)}
+    disabled={!hasPrev}
+    className="
+      rounded-xl
+      border-slate-200
+      bg-white
+      shadow-sm
+      hover:shadow-md
+      hover:-translate-y-0.5
+      transition-all
+      duration-200
+    "
+  >
+    <FiChevronLeft className="h-4 w-4 mr-1" />
+    Previous
+  </Button>
+
+  <Button
+    variant="outline"
+    size="sm"
+    onClick={() => onPageChange(currentPage + 1)}
+    disabled={!hasNext}
+    className="
+      rounded-xl
+      border-slate-200
+      bg-white
+      shadow-sm
+      hover:shadow-md
+      hover:-translate-y-0.5
+      transition-all
+      duration-200
+    "
+  >
+    Next
+    <FiChevronRight className="h-4 w-4 ml-1" />
+  </Button>
+</div>
     </div>
   );
 }

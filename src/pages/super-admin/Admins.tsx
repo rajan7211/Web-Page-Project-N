@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiLogIn } from 'react-icons/fi';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +10,14 @@ import { DataTable } from '@/components/shared/DataTable';
 import { FiShield } from 'react-icons/fi';
 
 export default function SuperAdminAdmins() {
-  const { users } = useAuth();
+  const { users, impersonateUser } = useAuth();
+  const navigate = useNavigate();
   const admins = useMemo(() => users.filter((u) => u.role === 'Admin'), [users]);
+
+  const handleImpersonate = (userId: string) => {
+    impersonateUser(userId);
+    navigate('/admin');
+  };
 
   const columns = [
     {
@@ -39,9 +47,17 @@ export default function SuperAdminAdmins() {
     {
       key: 'id' as const,
       label: 'Actions',
-      render: () => (
+      render: (value: string) => (
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm">View</Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleImpersonate(value)}
+            className="gap-1 text-blue-600 hover:text-blue-700"
+          >
+            <FiLogIn className="h-4 w-4" />
+            Impersonate
+          </Button>
           <Button variant="ghost" size="sm">Manage</Button>
         </div>
       ),

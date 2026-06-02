@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   const customers = useMemo(() => users.filter((u) => u.role === 'Customer'), [users]);
   const filteredCustomers = useSearch(customers, searchQuery, ['name', 'email']);
 
-  const pagination = usePagination(filteredCustomers.length, 10);
+  const pagination = usePagination(filteredCustomers.length, 5);
   const paginatedCustomers = filteredCustomers.slice(pagination.startIndex, pagination.endIndex);
 
   const stats = [
@@ -97,5 +97,18 @@ export default function AdminDashboard() {
     </DashboardLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

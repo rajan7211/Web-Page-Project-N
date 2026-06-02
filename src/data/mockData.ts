@@ -158,7 +158,7 @@ export const products: Product[] = [
     price: '$31/mo',
     rating: 4.6,
     description: 'Analyze and visualize business growth.',
-    image: 'https://picsum.photos/600/400?random=15',
+    image: 'https://picsum.photos/600/400?random=17',
   },
 ];
 

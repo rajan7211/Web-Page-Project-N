@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function usePagination(totalItems: number, itemsPerPage = 10) {
+export function usePagination(totalItems: number, itemsPerPage = 5) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -23,5 +23,13 @@ export function usePagination(totalItems: number, itemsPerPage = 10) {
     hasPrev: currentPage > 1,
   };
 }
+
+
+
+
+
+
+
+
 
 
