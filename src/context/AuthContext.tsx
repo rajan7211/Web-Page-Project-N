@@ -12,6 +12,10 @@ interface AuthContextType {
   logout: () => void;
   getDashboardRoute: (role: UserRole) => string;
   getOrdersForCustomer: (customerId: string) => Order[];
+  updateUserStatus :(
+    userId : string,
+    status : 'active' | 'inactive' | 'blocked'
+  ) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -21,6 +25,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('users');
     return saved ? JSON.parse(saved) : initialUsers;
   });
+  const updateUserStatus = (
+  userId: string,
+  status: 'active' | 'inactive' | 'blocked'
+) => {
+  setUsers((prev) =>
+    prev.map((user) =>
+      user.id === userId
+        ? {
+            ...user,
+            status,
+          }
+        : user
+    )
+  );
+};
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('currentUser');
@@ -117,22 +136,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        isAuthenticated,
-        users,
-        orders,
-        login,
-        register,
-        logout,
-        getDashboardRoute,
-        getOrdersForCustomer,
-      }}
-    >
+ <AuthContext.Provider
+  value={{
+    currentUser,
+    isAuthenticated,
+    users,
+    orders,
+    login,
+    register,
+    logout,
+    getDashboardRoute,
+    getOrdersForCustomer,
+    updateUserStatus,
+  }}
+>
       {children}
     </AuthContext.Provider>
   );
 }
+
+
+
+
 
 

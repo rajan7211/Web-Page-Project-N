@@ -2,13 +2,21 @@ import { Link } from 'react-router-dom';
 import { FiArrowRight, FiShield, FiUsers, FiPackage, FiCheck } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth';
 import { products } from '../data/mockData';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 export default function Home() {
   const { isAuthenticated, currentUser, getDashboardRoute } = useAuth();
 
-  const welcomeLink =
-    isAuthenticated && currentUser ? getDashboardRoute(currentUser.role) : '/register';
+  const {
+    visibleItems: visibleProducts,
+    lastElementRef,
+    hasMore,
+  } = useInfiniteScroll(products, 6);
 
+  const welcomeLink =
+    isAuthenticated && currentUser
+      ? getDashboardRoute(currentUser.role)
+      : '/register';
   return (
     <div className="min-h-screen bg-white text-slate-900">
       {/* Welcome Banner */}
@@ -75,36 +83,64 @@ export default function Home() {
       </section>
 
       {/* Products */}
-      <section className="py-20 px-6 bg-slate-900 text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold">Featured Products</h2>
-            <p className="text-slate-400 mt-2">Tools built for your growth stack</p>
+<section className="py-20 px-6 bg-slate-900 text-white">
+  <div className="max-w-7xl mx-auto">
+    <div className="mb-12 text-center">
+      <h2 className="text-3xl font-bold">Featured Products</h2>
+      <p className="text-slate-400 mt-2">
+        Tools built for your growth stack
+      </p>
+    </div>
+
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {visibleProducts.map((p, index) => {
+        const isLast =
+          index === visibleProducts.length - 1;
+
+        return (
+          <div
+            key={p.id}
+            ref={isLast ? lastElementRef : undefined}
+            className="bg-slate-800 rounded-2xl p-5 border border-slate-700 hover:border-blue-500 transition group"
+          >
+            <img
+              src={p.image}
+              alt={p.title}
+              className="w-full h-48 object-cover rounded-xl mb-4 group-hover:scale-105 transition duration-300"
+            />
+
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-bold text-xl">
+                {p.title}
+              </h3>
+
+              <span className="text-blue-400 font-bold">
+                {p.price}
+              </span>
+            </div>
+
+            <p className="text-slate-400 text-sm mb-6">
+              {p.description}
+            </p>
+
+            <button className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-blue-400 transition">
+              Add to cart
+            </button>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((p) => (
-              <div
-                key={p.id}
-                className="bg-slate-800 rounded-2xl p-5 border border-slate-700 hover:border-blue-500 transition group"
-              >
-                <img
-                  src={p.image}
-                  alt={p.title}
-                  className="w-full h-48 object-cover rounded-xl mb-4 group-hover:scale-105 transition duration-300"
-                />
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-bold text-xl">{p.title}</h3>
-                  <span className="text-blue-400 font-bold">{p.price}</span>
-                </div>
-                <p className="text-slate-400 text-sm mb-6">{p.description}</p>
-                <button className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-blue-400 transition">
-                  Add to cart
-                </button>
-              </div>
-            ))}
-          </div>
+        );
+      })}
+    </div>
+
+    {hasMore && (
+      <div className="flex justify-center mt-10">
+        <div className="flex items-center gap-3 text-slate-400">
+          <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+          <span>Loading more products...</span>
         </div>
-      </section>
+      </div>
+    )}
+  </div>
+</section>
 
       {/* Why Us */}
       <section className="py-20 px-6 max-w-7xl mx-auto">

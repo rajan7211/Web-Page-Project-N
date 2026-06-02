@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/shared/DataTable';
 import { Pagination } from '@/components/shared/Pagination';
+import CustomerStatusBoard from './CustomerStatusBoard';
 
 export default function AdminCustomers() {
   const { users } = useAuth();
@@ -64,41 +65,75 @@ export default function AdminCustomers() {
     },
   ];
 
-  return (
-    <DashboardLayout title="Customers" subtitle="Manage all customer accounts">
-      <Card className="rounded-2xl border-slate-200 shadow-sm">
-        <CardHeader className="border-b border-slate-100">
-          <div className="flex flex-col lg:flex-row justify-between gap-4">
-            <CardTitle className="text-lg font-bold">All Customers ({filteredCustomers.length})</CardTitle>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
-                <Input
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-full sm:w-64"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-40">
-                  <FiFilter className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+   return (
+  <DashboardLayout
+    title="Customers"
+    subtitle="Manage all customer accounts"
+  >
+    {/* Drag & Drop Status Board */}
+    <CustomerStatusBoard />
+
+    <Card className="rounded-2xl border-slate-200 shadow-sm mt-6">
+      <CardHeader className="border-b border-slate-100">
+        <div className="flex flex-col lg:flex-row justify-between gap-4">
+          <CardTitle className="text-lg font-bold">
+            All Customers ({filteredCustomers.length})
+          </CardTitle>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+              <Input
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 w-full sm:w-64"
+              />
             </div>
+
+            <Select
+              value={statusFilter}
+              onValueChange={setStatusFilter}
+            >
+              <SelectTrigger className="w-full sm:w-40">
+                <FiFilter className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="All">
+                  All Status
+                </SelectItem>
+
+                <SelectItem value="active">
+                  Active
+                </SelectItem>
+
+                <SelectItem value="inactive">
+                  Inactive
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </CardHeader>
-        <DataTable data={paginatedCustomers} columns={columns} />
-        <Pagination {...pagination} onPageChange={pagination.goToPage} />
-      </Card>
-    </DashboardLayout>
-  );
+        </div>
+      </CardHeader>
+
+      <DataTable
+        data={paginatedCustomers}
+        columns={columns}
+      />
+
+      <Pagination
+        {...pagination}
+        onPageChange={pagination.goToPage}
+      />
+    </Card>
+  </DashboardLayout>
+);
+
+
 }
+
+
 
 

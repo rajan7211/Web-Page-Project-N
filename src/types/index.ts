@@ -1,8 +1,6 @@
-// ============================================
 // USER TYPES
-// ============================================
 export type UserRole = 'Super Admin' | 'Admin' | 'Customer';
-export type UserStatus = 'active' | 'inactive';
+export type UserStatus = 'active' | 'inactive' | 'blocked';
 
 export interface User {
   id: string;
@@ -16,9 +14,9 @@ export interface User {
   createdAt: string;
 }
 
-// ============================================
+
 // AUTH TYPES
-// ============================================
+
 export interface LoginData {
   email: string;
   password: string;
@@ -33,9 +31,9 @@ export interface RegisterData {
   role: UserRole;
 }
 
-// ============================================
+
 // PRODUCT TYPES
-// ============================================
+
 export interface Product {
   id: string;
   title: string;
@@ -45,9 +43,8 @@ export interface Product {
   image: string;
 }
 
-// ============================================
 // ORDER TYPES
-// ============================================
+
 export type OrderStatus = 'Delivered' | 'Processing' | 'Shipped' | 'Pending';
 
 export interface Order {
@@ -59,9 +56,9 @@ export interface Order {
   placedAt: string;
 }
 
-// ============================================
+
 // CATEGORY TYPES
-// ============================================
+
 export interface Category {
   id: string;
   title: string;
@@ -69,9 +66,9 @@ export interface Category {
   color: string;
 }
 
-// ============================================
+
 // TESTIMONIAL TYPES
-// ============================================
+
 export interface Testimonial {
   id: string;
   name: string;
