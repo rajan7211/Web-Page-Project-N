@@ -13,23 +13,16 @@ import {
   FiLogOut,
   FiChevronRight,
   FiShield,
-  FiPackage,
-  FiHeart,
   FiHelpCircle,
-  FiBell,
-  FiMoon,
-  FiSun,
   FiAlertTriangle,
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
@@ -116,7 +109,7 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
       )}
 
       <div className="flex">
-        {/* ==================== SIDEBAR ==================== */}
+      {/* sidebar */}
         <aside
           className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-white border-r border-slate-200 shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
             mobileOpen ? 'translate-x-0' : '-translate-x-full'
@@ -150,7 +143,15 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-sm group-hover:blur-md transition-all" />
               <div className="relative flex items-center gap-3 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-3 border border-slate-200">
-                <Avatar className="h-11 w-11 ring-2 ring-white shadow-md">
+                <Avatar className="h-11 w-11 ring-2 ring-white shadow-md flex-shrink-0">
+                  {currentUser?.profileImage ? (
+                    <AvatarImage
+                      src={currentUser.profileImage}
+                      alt={currentUser.name}
+                      className="object-cover"
+                    />
+                  ) : null}
+                  
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-sm">
                     {getInitials(currentUser?.name || 'User')}
                   </AvatarFallback>
@@ -261,7 +262,6 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
           </div>
         </aside>
 
-        {/* ==================== MAIN CONTENT ==================== */}
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Header */}
           <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
@@ -281,59 +281,6 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                {/* Notifications */}
-                <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl">
-                  <FiBell className="h-5 w-5 text-slate-600" />
-                  <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white" />
-                </Button>
-
-                {/* User Badge */}
-                <Badge
-                  variant="secondary"
-                  className="hidden sm:flex rounded-full px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700"
-                >
-                  {currentUser?.role}
-                </Badge>
-
-                {/* User Avatar Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-sm">
-                          {userInitial}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 rounded-2xl shadow-xl">
-                    <div className="px-4 py-3 border-b border-slate-100">
-                      <p className="text-sm font-semibold text-slate-900">{currentUser?.name}</p>
-                      <p className="text-xs text-slate-500 truncate">{currentUser?.email}</p>
-                    </div>
-                    <DropdownMenuItem
-                      onClick={() => navigate('/customer/profile')}
-                      className="gap-2 cursor-pointer"
-                    >
-                      <FiUser className="h-4 w-4" /> Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => navigate('/customer/settings')}
-                      className="gap-2 cursor-pointer"
-                    >
-                      <FiSettings className="h-4 w-4" /> Settings
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => setShowLogoutConfirm(true)}
-                      className="gap-2 text-red-600 cursor-pointer"
-                    >
-                      <FiLogOut className="h-4 w-4" /> Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
             </div>
           </header>
 
@@ -379,6 +326,9 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
     </div>
   );
 }
+
+
+
 
 
 

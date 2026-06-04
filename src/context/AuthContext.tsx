@@ -14,10 +14,8 @@ interface AuthContextType {
   logout: () => void;
   getDashboardRoute: (role: UserRole) => string;
   getOrdersForCustomer: (customerId: string) => Order[];
-  updateUserStatus :(
-    userId : string,
-    status : 'active' | 'inactive' | 'blocked'
-  ) => void;
+  updateUserStatus: (userId: string, status: 'active' | 'inactive' | 'blocked') => void;
+  updateUserProfile: (userId: string, updates: Partial<User>) => void; 
   impersonateUser: (userId: string) => void;
   stopImpersonating: () => void;
 }
@@ -29,21 +27,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('users');
     return saved ? JSON.parse(saved) : initialUsers;
   });
-  const updateUserStatus = (
-  userId: string,
-  status: 'active' | 'inactive' | 'blocked'
-) => {
-  setUsers((prev) =>
-    prev.map((user) =>
-      user.id === userId
-        ? {
-            ...user,
-            status,
-          }
-        : user
-    )
-  );
-};
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('currentUser');
@@ -152,6 +135,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return orders.filter((order) => order.customerId === customerId);
   };
 
+  const updateUserStatus = (
+    userId: string,
+    status: 'active' | 'inactive' | 'blocked'
+  ) => {
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === userId
+          ? {
+              ...user,
+              status,
+            }
+          : user
+      )
+    );
+  };
+
+
+  const updateUserProfile = (userId: string, updates: Partial<User>) => {
+    setUsers((prevUsers) => {
+      const updatedUsers = prevUsers.map((user) =>
+        user.id === userId ? { ...user, ...updates } : user
+      );
+
+      // Update current user if it's the same user
+      if (currentUser?.id === userId) {
+        const updatedCurrentUser = { ...currentUser, ...updates };
+        setCurrentUser(updatedCurrentUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+      }
+
+      return updatedUsers;
+    });
+  };
+
   const impersonateUser = (userId: string) => {
     if (currentUser?.role !== 'Super Admin') return;
 
@@ -171,28 +188,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
- <AuthContext.Provider
-  value={{
-    currentUser,
-    isAuthenticated,
-    users,
-    orders,
-    originalUser,
-    isImpersonating: !!originalUser,
-    login,
-    register,
-    logout,
-    getDashboardRoute,
-    getOrdersForCustomer,
-    updateUserStatus,
-    impersonateUser,
-    stopImpersonating,
-  }}
->
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        isAuthenticated,
+        users,
+        orders,
+        originalUser,
+        isImpersonating: !!originalUser,
+        login,
+        register,
+        logout,
+        getDashboardRoute,
+        getOrdersForCustomer,
+        updateUserStatus,
+        updateUserProfile, 
+        impersonateUser,
+        stopImpersonating,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
+
+
+
 
 
 

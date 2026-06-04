@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Table,
   TableBody,
@@ -59,19 +59,30 @@ export default function CustomerDashboard() {
     },
   ];
 
+  const userInitial = useMemo(
+    () => currentUser?.firstName?.charAt(0)?.toUpperCase() || 'U',
+    [currentUser?.firstName]
+  );
+
   return (
     <DashboardLayout
       title="Customer Dashboard"
       subtitle="Your account overview"
     >
       <div className="space-y-6">
-        {/* Welcome Card */}
         <Card className="rounded-2xl border-slate-200 shadow-sm bg-gradient-to-br from-blue-50 to-slate-50">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarFallback className="bg-blue-600 text-white text-xl font-bold">
-                  {currentUser?.firstName?.charAt(0) || 'U'}
+              <Avatar className="h-16 w-16 border-2 border-white shadow-md">
+                {currentUser?.profileImage ? (
+                  <AvatarImage
+                    src={currentUser.profileImage}
+                    alt={currentUser.name}
+                    className="object-cover"
+                  />
+                ) : null}
+                <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xl font-bold">
+                  {userInitial}
                 </AvatarFallback>
               </Avatar>
               <div>
@@ -87,7 +98,7 @@ export default function CustomerDashboard() {
         {/* Stats */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <Card key={stat.title} className="rounded-2xl border-slate-200 shadow-sm">
+            <Card key={stat.title} className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div>
@@ -128,16 +139,18 @@ export default function CustomerDashboard() {
                       <Badge
                         className={
                           order.status === 'Delivered'
-                            ? 'bg-emerald-100 text-emerald-700'
+                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
                             : order.status === 'Processing'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-amber-100 text-amber-700'
+                            ? 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+                            : order.status === 'Shipped'
+                            ? 'bg-purple-100 text-purple-700 hover:bg-purple-100'
+                            : 'bg-amber-100 text-amber-700 hover:bg-amber-100'
                         }
                       >
                         {order.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-semibold">${order.total}</TableCell>
+                    <TableCell className="font-semibold text-slate-900">${order.total}</TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -154,5 +167,21 @@ export default function CustomerDashboard() {
     </DashboardLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

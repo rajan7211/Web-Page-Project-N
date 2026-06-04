@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 
 export default function Navbar() {
@@ -127,6 +127,13 @@ export default function Navbar() {
                     className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all duration-200 border border-slate-200"
                   >
                     <Avatar className="h-7 w-7">
+                      {currentUser?.profileImage ? (
+                        <AvatarImage
+                          src={currentUser.profileImage}
+                          alt={currentUser.name}
+                          className="object-cover"
+                        />
+                      ) : null}
                       <AvatarFallback className="bg-blue-600 text-white text-xs font-semibold">
                         {userInitial}
                       </AvatarFallback>
@@ -147,7 +154,15 @@ export default function Navbar() {
                     {/* Profile Header */}
                     <div className="p-4 bg-slate-50/80 border-b border-slate-100">
                       <div className="flex items-center gap-3">
+                        {/* ✅ UPDATED: Display Profile Image or Fallback Avatar */}
                         <Avatar className="h-10 w-10">
+                          {currentUser?.profileImage ? (
+                            <AvatarImage
+                              src={currentUser.profileImage}
+                              alt={currentUser.name}
+                              className="object-cover"
+                            />
+                          ) : null}
                           <AvatarFallback className="bg-blue-600 text-white font-semibold">
                             {userInitial}
                           </AvatarFallback>
@@ -177,7 +192,7 @@ export default function Navbar() {
                             className="w-full justify-start gap-3 text-slate-700 font-medium"
                             size="sm"
                           >
-                            <Link to="/customer" onClick={() => setShowProfile(false)}>
+                            <Link to="/customer/profile" onClick={() => setShowProfile(false)}>
                               <FiUser className="w-4 h-4" /> My Profile
                             </Link>
                           </Button>
@@ -219,37 +234,37 @@ export default function Navbar() {
             ) : (
               /* NOT Authenticated - Show Login & Register Buttons */
               <div className="hidden md:flex items-center gap-2">
-             <Button
-  asChild
-  variant="ghost"
-  size="sm"
-  className="
-    text-slate-600
-    hover:text-blue-600
-    hover:bg-blue-50
-    hover:-translate-y-0.5
-    transition-all duration-200
-    rounded-lg
-  "
->
-  <Link to="/login">Login</Link>
-</Button>
-              <Button
-  asChild
-  size="sm"
-  className="
-    bg-gradient-to-r from-blue-600 to-indigo-600
-    hover:from-blue-700 hover:to-indigo-700
-    text-white font-medium
-    shadow-md shadow-blue-500/20
-    hover:shadow-lg hover:shadow-blue-500/30
-    hover:-translate-y-0.5
-    transition-all duration-200
-    rounded-lg
-  "
->
-  <Link to="/register">Get Started</Link>
-</Button>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="
+                    text-slate-600
+                    hover:text-blue-600
+                    hover:bg-blue-50
+                    hover:-translate-y-0.5
+                    transition-all duration-200
+                    rounded-lg
+                  "
+                >
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  className="
+                    bg-gradient-to-r from-blue-600 to-indigo-600
+                    hover:from-blue-700 hover:to-indigo-700
+                    text-white font-medium
+                    shadow-md shadow-blue-500/20
+                    hover:shadow-lg hover:shadow-blue-500/30
+                    hover:-translate-y-0.5
+                    transition-all duration-200
+                    rounded-lg
+                  "
+                >
+                  <Link to="/register">Get Started</Link>
+                </Button>
               </div>
             )}
 
@@ -333,6 +348,13 @@ export default function Navbar() {
     </nav>
   );
 }
+
+
+
+
+
+
+
 
 
 
