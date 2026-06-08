@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchOrders } from '@/services/orders';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,25 +15,42 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 export default function CustomerOrders() {
-  const { currentUser, getOrdersForCustomer } = useAuth();
+  const { currentUser } = useAuth();
 
-  const orders = useMemo(
-    () => (currentUser ? getOrdersForCustomer(currentUser.id) : []),
-    [currentUser, getOrdersForCustomer]
+  const { data: orders = [], isLoading, isError } = useQuery(
+    ['customerOrders', currentUser?.id],
+    () => fetchOrders(currentUser!.id),
+    {
+      enabled: !!currentUser,
+      staleTime: 1000 * 60,
+      keepPreviousData: true,
+    }
   );
+
+  const orderCount = useMemo(() => orders.length, [orders]);
 
   return (
     <DashboardLayout title="My Orders" subtitle="View and track all your orders">
       <Card className="rounded-2xl border-slate-200 shadow-sm">
         <CardHeader className="border-b border-slate-100">
           <CardTitle className="text-base font-semibold">
-            Order History ({orders.length})
+            Order History ({orderCount})
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {orders.length > 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <LoadingSpinner />
+            </div>
+          ) : isError ? (
+            <EmptyState
+              title="Unable to load orders"
+              description="Something went wrong while fetching your order history. Try again later."
+            />
+          ) : orders.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow className="bg-slate-50">

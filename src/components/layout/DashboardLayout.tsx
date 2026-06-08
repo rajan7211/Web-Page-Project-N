@@ -16,6 +16,8 @@ import {
   FiHelpCircle,
   FiAlertTriangle,
 } from 'react-icons/fi';
+
+
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -97,7 +99,7 @@ export default function DashboardLayout({ title, subtitle, children }: Dashboard
     }
     return name.charAt(0);
   };
-
+``
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Mobile Overlay */}
