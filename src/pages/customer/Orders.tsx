@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Order } from '@/types';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchOrders } from '@/services/orders';
@@ -20,15 +21,12 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 export default function CustomerOrders() {
   const { currentUser } = useAuth();
 
-  const { data: orders = [], isLoading, isError } = useQuery(
-    ['customerOrders', currentUser?.id],
-    () => fetchOrders(currentUser!.id),
-    {
-      enabled: !!currentUser,
-      staleTime: 1000 * 60,
-      keepPreviousData: true,
-    }
-  );
+  const { data: orders = [] as Order[], isLoading, isError } = useQuery<Order[], Error>({
+    queryKey: ['customerOrders', currentUser?.id],
+    queryFn: () => fetchOrders(currentUser!.id),
+    enabled: !!currentUser,
+    staleTime: 1000 * 60,
+  });
 
   const orderCount = useMemo(() => orders.length, [orders]);
 

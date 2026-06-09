@@ -73,3 +73,20 @@ export default defineConfig([
   },
 ])
 ```
+
+## JSON Server API
+
+This project now uses a local JSON Server backend for users, products, and orders.
+
+- API source file: `db.json`
+- Start JSON Server: `npm run json-server`
+- Default endpoint: `http://localhost:4000`
+- Override the backend URL with `VITE_API_URL` if needed.
+
+Run both services during development:
+
+```bash
+npm install
+npm run json-server
+npm run dev
+```

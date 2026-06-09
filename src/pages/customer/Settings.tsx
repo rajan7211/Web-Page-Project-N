@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   FiBell,
-  FiMail,
   FiLock,
   FiEye,
   FiEyeOff,

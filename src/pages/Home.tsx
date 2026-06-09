@@ -6,18 +6,29 @@ import {
   FiPackage,
   FiCheck,
 } from "react-icons/fi";
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from "../hooks/useAuth";
-import { products } from "../data/mockData";
+import { fetchProducts } from "../services/products";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import { EmptyState } from "../components/shared/EmptyState";
+import { LoadingSpinner } from "../components/shared/LoadingSpinner";
+import { Product } from '../types';
 
 export default function Home() {
   const { isAuthenticated, currentUser, getDashboardRoute } = useAuth();
+
+  const { data: products = [], isLoading, isError } = useQuery<Product[]>({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+    staleTime: 1000 * 60,
+    retry: 1,
+  });
 
   const {
     visibleItems: visibleProducts,
     lastElementRef,
     hasMore,
-  } = useInfiniteScroll(products, 6);
+  } = useInfiniteScroll<Product>(products, 6);
 
   const welcomeLink =
     isAuthenticated && currentUser
@@ -100,45 +111,58 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {visibleProducts.map((p, index) => {
-              const isLast = index === visibleProducts.length - 1;
-
-              return (
-                <div
-                  key={p.id}
-                  ref={isLast ? lastElementRef : undefined}
-                  className="bg-slate-800 rounded-2xl p-5 border border-slate-700 hover:border-blue-500 transition group"
-                >
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="w-full h-48 object-cover rounded-xl mb-4 group-hover:scale-105 transition duration-300"
-                  />
-
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-bold text-xl">{p.title}</h3>
-
-                    <span className="text-blue-400 font-bold">{p.price}</span>
-                  </div>
-
-                  <p className="text-slate-400 text-sm mb-6">{p.description}</p>
-
-                  <button className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-blue-400 transition">
-                    Add to cart
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {hasMore && (
-            <div className="flex justify-center mt-10">
-              <div className="flex items-center gap-3 text-slate-400">
-                <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                <span>Loading more products...</span>
-              </div>
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner />
             </div>
+          ) : isError ? (
+            <EmptyState
+              title="Unable to load products"
+              description="There was a problem fetching products from the API. Please try again later."
+            />
+          ) : (
+            <>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {visibleProducts.map((p, index) => {
+                  const isLast = index === visibleProducts.length - 1;
+
+                  return (
+                    <div
+                      key={p.id}
+                      ref={isLast ? lastElementRef : undefined}
+                      className="bg-slate-800 rounded-2xl p-5 border border-slate-700 hover:border-blue-500 transition group"
+                    >
+                      <img
+                        src={p.image}
+                        alt={p.title}
+                        className="w-full h-48 object-cover rounded-xl mb-4 group-hover:scale-105 transition duration-300"
+                      />
+
+                      <div className="flex justify-between items-center mb-2">
+                        <h3 className="font-bold text-xl">{p.title}</h3>
+
+                        <span className="text-blue-400 font-bold">{p.price}</span>
+                      </div>
+
+                      <p className="text-slate-400 text-sm mb-6">{p.description}</p>
+
+                      <button className="w-full py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-blue-400 transition">
+                        Add to cart
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {hasMore && (
+                <div className="flex justify-center mt-10">
+                  <div className="flex items-center gap-3 text-slate-400">
+                    <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                    <span>Loading more products...</span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

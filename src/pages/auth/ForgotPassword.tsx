@@ -27,7 +27,7 @@ export default function ForgotPassword() {
   const formik = useFormik({
     initialValues: { email: '' },
     validationSchema: forgotPasswordSchema,
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsSubmitted(true);
       toast.success('Password reset link sent to your email!');

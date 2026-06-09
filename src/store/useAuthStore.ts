@@ -1,7 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, LoginData, RegisterData, UserRole, Order } from '../types';
-import { users as initialUsers, orders as initialOrders } from '../data/mockData';
+import {
+  fetchUsers,
+  loginUser,
+  createUser,
+  updateUser as updateUserApi,
+  updateUserStatus as updateUserStatusApi,
+} from '../services/users';
+import { fetchAllOrders } from '../services/orders';
 
 export interface AuthStore {
   currentUser: User | null;
@@ -10,6 +17,7 @@ export interface AuthStore {
   orders: Order[];
   originalUser: User | null;
   isImpersonating: boolean;
+  loadInitialData: () => Promise<void>;
   login: (data: LoginData) => Promise<User>;
   register: (data: RegisterData) => Promise<User>;
   logout: () => void;
@@ -26,61 +34,37 @@ export const useAuthStore = create<AuthStore>()(
     (set, get) => ({
       currentUser: null,
       isAuthenticated: false,
-      users: initialUsers,
-      orders: initialOrders,
+      users: [],
+      orders: [],
       originalUser: null,
       isImpersonating: false,
 
+      loadInitialData: async () => {
+        try {
+          const [users, orders] = await Promise.all([fetchUsers(), fetchAllOrders()]);
+          set({ users, orders });
+        } catch (error) {
+          console.warn('Failed to load initial data from API', error);
+        }
+      },
+
       login: async (data) => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const user = get().users.find(
-              (u) => u.email === data.email && u.password === data.password
-            );
-
-            if (!user) {
-              reject(new Error('Invalid email or password'));
-              return;
-            }
-
-            const { password, ...userWithoutPassword } = user;
-            set({ currentUser: userWithoutPassword as User, isAuthenticated: true });
-            resolve(userWithoutPassword as User);
-          }, 500);
-        });
+        const user = await loginUser(data);
+        const { password, ...userWithoutPassword } = user;
+        set({ currentUser: userWithoutPassword as User, isAuthenticated: true });
+        return userWithoutPassword as User;
       },
 
       register: async (data) => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const exists = get().users.some((u) => u.email === data.email);
-            if (exists) {
-              reject(new Error('Email already registered'));
-              return;
-            }
+        const newUser = await createUser(data);
+        set((state) => ({ users: [...state.users, newUser] }));
 
-            const newUser: User = {
-              id: `user-${Date.now()}`,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              name: `${data.firstName} ${data.lastName}`,
-              email: data.email,
-              password: data.password,
-              role: data.role,
-              status: 'active',
-              createdAt: new Date().toISOString(),
-            };
+        if (data.role === 'Customer') {
+          const { password, ...userWithoutPassword } = newUser;
+          set({ currentUser: userWithoutPassword as User, isAuthenticated: true });
+        }
 
-            set((state) => ({ users: [...state.users, newUser] }));
-
-            if (data.role === 'Customer') {
-              const { password, ...userWithoutPassword } = newUser;
-              set({ currentUser: userWithoutPassword as User, isAuthenticated: true });
-            }
-
-            resolve(newUser);
-          }, 500);
-        });
+        return newUser;
       },
 
       logout: () => {
@@ -98,34 +82,41 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       updateUserStatus: (userId, status) => {
-        set((state) => ({
-          users: state.users.map((user) =>
-            user.id === userId
-              ? {
-                  ...user,
-                  status,
-                }
-              : user
-          ),
-        }));
+        updateUserStatusApi(userId, status)
+          .then((updatedUser) => {
+            set((state) => ({
+              users: state.users.map((user) =>
+                user.id === updatedUser.id ? updatedUser : user
+              ),
+            }));
+          })
+          .catch((error) => {
+            console.warn('Failed to update user status', error);
+          });
       },
 
       updateUserProfile: (userId, updates) => {
-        set((state) => {
-          const updatedUsers = state.users.map((user) =>
-            user.id === userId ? { ...user, ...updates } : user
-          );
+        updateUserApi(userId, updates)
+          .then((updatedUser) => {
+            set((state) => {
+              const updatedUsers = state.users.map((user) =>
+                user.id === updatedUser.id ? updatedUser : user
+              );
 
-          const currentUser =
-            state.currentUser?.id === userId
-              ? { ...state.currentUser, ...updates }
-              : state.currentUser;
+              const currentUser =
+                state.currentUser?.id === updatedUser.id
+                  ? { ...state.currentUser, ...updates }
+                  : state.currentUser;
 
-          return {
-            users: updatedUsers,
-            currentUser,
-          };
-        });
+              return {
+                users: updatedUsers,
+                currentUser,
+              };
+            });
+          })
+          .catch((error) => {
+            console.warn('Failed to update user profile', error);
+          });
       },
 
       impersonateUser: (userId) => {
@@ -151,7 +142,6 @@ export const useAuthStore = create<AuthStore>()(
       partialize: (state) => ({
         currentUser: state.currentUser,
         isAuthenticated: state.isAuthenticated,
-        users: state.users,
         originalUser: state.originalUser,
         isImpersonating: state.isImpersonating,
       }),

@@ -14,7 +14,7 @@ import { DataTable } from '@/components/shared/DataTable';
 import { Pagination } from '@/components/shared/Pagination';
 
 export default function SuperAdminUsers() {
-  const { users, impersonateUser, currentUser } = useAuth();
+  const { users, impersonateUser } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');

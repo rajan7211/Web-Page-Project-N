@@ -11,7 +11,6 @@ import {
   FiBell,
   FiShield,
   FiSave,
-  FiSettings as FiSettingsIcon,
 } from 'react-icons/fi';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -64,7 +63,7 @@ export default function AdminSettings() {
       phone: '',
     },
     validationSchema: adminProfileSchema,
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
       toast.success('Settings updated successfully!');
