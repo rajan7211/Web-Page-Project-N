@@ -1,8 +1,8 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { FiShoppingCart, FiUser, FiPackage, FiSettings, FiLogOut } from 'react-icons/fi';
 import { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -114,7 +114,6 @@ export default function Navbar() {
                     <Link to="/cart">
                       <FiShoppingCart className="w-5 h-5 text-slate-600" />
                       <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
-                        0
                       </span>
                     </Link>
                   </Button>
@@ -154,7 +153,7 @@ export default function Navbar() {
                     {/* Profile Header */}
                     <div className="p-4 bg-slate-50/80 border-b border-slate-100">
                       <div className="flex items-center gap-3">
-                        {/* ✅ UPDATED: Display Profile Image or Fallback Avatar */}
+                        {/* Avatar */}
                         <Avatar className="h-10 w-10">
                           {currentUser?.profileImage ? (
                             <AvatarImage
@@ -238,30 +237,14 @@ export default function Navbar() {
                   asChild
                   variant="ghost"
                   size="sm"
-                  className="
-                    text-slate-600
-                    hover:text-blue-600
-                    hover:bg-blue-50
-                    hover:-translate-y-0.5
-                    transition-all duration-200
-                    rounded-lg
-                  "
+                  className="text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:-translate-y-0.5 transition-all duration-200 rounded-lg"
                 >
                   <Link to="/login">Login</Link>
                 </Button>
                 <Button
                   asChild
                   size="sm"
-                  className="
-                    bg-gradient-to-r from-blue-600 to-indigo-600
-                    hover:from-blue-700 hover:to-indigo-700
-                    text-white font-medium
-                    shadow-md shadow-blue-500/20
-                    hover:shadow-lg hover:shadow-blue-500/30
-                    hover:-translate-y-0.5
-                    transition-all duration-200
-                    rounded-lg
-                  "
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-200 rounded-lg"
                 >
                   <Link to="/register">Get Started</Link>
                 </Button>
@@ -347,15 +330,5 @@ export default function Navbar() {
       </div>
     </nav>
   );
+
 }
-
-
-
-
-
-
-
-
-
-
-

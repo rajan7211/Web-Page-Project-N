@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { FiHeart, FiSend, FiCheckCircle } from 'react-icons/fi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Link } from 'react-router-dom';
 
-export default function Footer() {
+const Footer = memo(function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -19,23 +20,31 @@ export default function Footer() {
   };
 
   const footerLinks = {
-    Product: ['Features', 'Integrations', 'Pricing', 'Changelog'],
+    Product: ['Features', 'Integrations', 'Pricing', 'Security'],
     Company: ['About', 'Blog', 'Careers', 'Contact'],
+    Resources: ['Documentation', 'Help Center', 'Community', 'Status'],
   };
 
   return (
-    <footer className="bg-white border-t border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid md:grid-cols-4 gap-8 mb-10">
+    <footer className="border-t border-slate-200 bg-gradient-to-b from-white to-slate-50">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+        {/* Main Footer */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-sm">W</span>
+          <div className="col-span-2 lg:col-span-2">
+            <Link to="/" className="flex items-center gap-2.5 mb-4 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="relative w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <span className="text-white font-bold text-sm">W</span>
+                </div>
               </div>
-              <span className="text-xl font-bold text-slate-800">whitepace</span>
-            </div>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-wider text-blue-600">Whitepace</p>
+                <p className="text-xs font-bold text-slate-900 -mt-1">Portal</p>
+              </div>
+            </Link>
+            <p className="text-slate-500 text-xs leading-relaxed max-w-xs">
               The all-in-one workspace for teams that want to move faster and collaborate better.
             </p>
           </div>
@@ -43,11 +52,13 @@ export default function Footer() {
           {/* Links */}
           {Object.entries(footerLinks).map(([section, links]) => (
             <div key={section}>
-              <h4 className="font-semibold text-slate-900 mb-4 text-sm">{section}</h4>
-              <ul className="space-y-2.5">
+              <h4 className="font-bold text-slate-900 mb-4 text-xs uppercase tracking-wider">
+                {section}
+              </h4>
+              <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link}>
-                    <button className="text-sm text-slate-500 hover:text-blue-600 transition-colors">
+                    <button className="text-xs text-slate-500 hover:text-blue-600 transition-colors">
                       {link}
                     </button>
                   </li>
@@ -57,23 +68,24 @@ export default function Footer() {
           ))}
         </div>
 
-        <Separator className="mb-8" />
+        <Separator className="mb-8 bg-slate-200/50" />
 
+        {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-sm text-slate-400 flex items-center gap-1.5">
+          <p className="text-xs text-slate-500 flex items-center gap-1.5">
             © {new Date().getFullYear()} Whitepace. Made with{' '}
             <FiHeart className="w-3 h-3 text-red-400 fill-red-400" /> All rights reserved.
           </p>
 
-          {/* Newsletter form */}
+          {/* Newsletter */}
           <form onSubmit={handleSubmit} className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative flex-1 md:w-64">
+            <div className="relative flex-1 md:flex-none md:w-56">
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="rounded-xl border-slate-200 bg-slate-50 pr-9 focus-visible:ring-blue-100"
+                placeholder="your@email.com"
+                className="pl-3 pr-9 h-8 bg-slate-100 border-0 focus:bg-white focus:ring-1 focus:ring-blue-500 rounded-lg text-xs"
               />
               {subscribed && (
                 <FiCheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
@@ -83,21 +95,22 @@ export default function Footer() {
               type="submit"
               disabled={subscribed}
               size="sm"
-              className={`rounded-xl gap-2 transition-all ${
+              className={`rounded-lg transition-all h-8 text-xs px-3 gap-1.5 ${
                 subscribed
-                  ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20'
+                  ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white'
               }`}
             >
-              <FiSend className="w-3.5 h-3.5" />
-              {subscribed ? 'Subscribed!' : 'Subscribe'}
+              <FiSend className="w-3 h-3" />
+              <span className="hidden sm:inline">{subscribed ? 'Subscribed' : 'Subscribe'}</span>
             </Button>
           </form>
         </div>
       </div>
     </footer>
   );
-}
+});
 
+export default Footer;
 
 

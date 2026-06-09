@@ -6,7 +6,6 @@ import { useAuth } from './hooks/useAuth';
 
 // Layout
 import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';
 
 // Pages
 import Home from './pages/Home';
@@ -206,7 +205,6 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
-          <Footer />
         </div>
 
         <ToastContainer
